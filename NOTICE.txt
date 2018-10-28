@@ -1,0 +1,9 @@
+Thin Collections for Rust
+Copyright 2018 Mohammad Rezaei
+Licensed under Apache 2.0 license
+
+This product includes portions of the following software:
+
+The Rust Programming Language
+Copyright 2014 The Rust Project Developers
+Licensed under the MIT license

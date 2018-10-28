@@ -1,0 +1,27 @@
+[package]
+name = "thincollections"
+version = "0.5.0"
+authors = ["Mohammad Rezaei <mohdev@rezaei.cc>"]
+license = "MIT/Apache-2.0"
+keywords = ["vector", "map", "set"]
+readme = "README.md"
+repository = "https://github.com/mohrezaei/thincollections"
+homepage = "https://github.com/mohrezaei/thincollections"
+documentation = "https://docs.rs/thincollections"
+description = """
+Alternative implementations for vector, map and set that are faster/smaller for some use cases.
+"""
+exclude = [
+    ".travis.yml",
+    "benchmarks/*",
+    "benches/*",
+    ".gitignore",
+    "tests/*"
+]
+[dependencies]
+
+[dev-dependencies]
+num = "0.2.0"
+rand = "0.5.5"
+xoshiro = "0.0.4"
+ordered-float = "1.0"
