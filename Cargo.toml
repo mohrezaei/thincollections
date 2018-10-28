@@ -16,6 +16,7 @@ exclude = [
     "benchmarks/*",
     "benches/*",
     ".gitignore",
+    ".gitattributes",
     "tests/*"
 ]
 [dependencies]
