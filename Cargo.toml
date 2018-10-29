@@ -1,6 +1,6 @@
 [package]
 name = "thincollections"
-version = "0.5.1"
+version = "0.5.2"
 authors = ["Mohammad Rezaei <mohdev@rezaei.cc>"]
 license = "MIT/Apache-2.0"
 keywords = ["vector", "map", "set"]

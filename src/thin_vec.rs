@@ -623,7 +623,7 @@ impl<T> ThinVec<T> {
             unsafe {
                 let len = self.len() - 1;
                 self.set_len(len);
-                return ptr::read(1 as *const T);
+                return ptr::read(NonNull::dangling().as_ptr());
             }
         }
         unsafe {
@@ -723,7 +723,7 @@ impl<T> ThinVec<T> {
                 let len = self.len();
                 assert!(index < len);
                 self.set_len(len - 1);
-                return ptr::read(1 as *const T);
+                return ptr::read(NonNull::dangling().as_ptr());
             }
         }
         let array: *mut T;
@@ -776,7 +776,7 @@ impl<T> ThinVec<T> {
         if mem::size_of::<T>() == 0 {
             let mut count = 0;
             unsafe {
-                let t: T = ptr::read(1 as *const T);
+                let t: T = ptr::read(NonNull::dangling().as_ptr());
                 for _i in 0..self.len() {
                     if f(&t) { count += 1; }
                 }
@@ -1048,7 +1048,7 @@ impl<T> ThinVec<T> {
             if len > 0 {
                 unsafe {
                     self.set_len(len - 1);
-                    return Some(ptr::read(1 as *const T));
+                    return Some(ptr::read(NonNull::dangling().as_ptr()));
                 }
             }
             return None;
@@ -1243,7 +1243,7 @@ impl<T> ThinVec<T> {
     pub fn into_boxed_slice(mut self) -> Box<[T]> {
         if mem::size_of::<T>() == 0 {
             unsafe {
-                let slice = slice::from_raw_parts_mut(1 as *mut T, self.len());
+                let slice = slice::from_raw_parts_mut(NonNull::dangling().as_ptr(), self.len());
                 let output: Box<[T]> = Box::from_raw(slice);
                 return output;
             }
@@ -1698,12 +1698,12 @@ impl<T> Deref for ThinVec<T> {
 
     fn deref(&self) -> &[T] {
         unsafe {
-            if mem::size_of::<T>() == 0 { return slice::from_raw_parts(1 as *const T, self.len()); }
+            if mem::size_of::<T>() == 0 { return slice::from_raw_parts(NonNull::dangling().as_ptr(), self.len()); }
             let len: usize;
             let arr: *mut T;
             if self.u.get() == DANGLE {
                 len = 0;
-                arr = ptr::null_mut();
+                arr = NonNull::dangling().as_ptr();
             } else {
                 let len_ptr = self.u.get() as *mut usize;
                 len = *len_ptr;
@@ -1717,12 +1717,12 @@ impl<T> Deref for ThinVec<T> {
 impl<T> DerefMut for ThinVec<T> {
     fn deref_mut(&mut self) -> &mut [T] {
         unsafe {
-            if mem::size_of::<T>() == 0 { return slice::from_raw_parts_mut(1 as *mut T, self.len()); }
+            if mem::size_of::<T>() == 0 { return slice::from_raw_parts_mut(NonNull::dangling().as_ptr(), self.len()); }
             let len: usize;
             let arr: *mut T;
             if self.u.get() == DANGLE {
                 len = 0;
-                arr = ptr::null_mut();
+                arr = NonNull::dangling().as_ptr();
             } else {
                 let len_ptr = self.u.get() as *mut usize;
                 len = *len_ptr;
@@ -1944,7 +1944,7 @@ impl<T> Iterator for IntoIter<T> {
 
                     // Use a non-null pointer value
                     // (self.ptr might be null because of wrapping)
-                    Some(ptr::read(1 as *mut T))
+                    Some(ptr::read(NonNull::dangling().as_ptr()))
                 } else {
                     let old = self.ptr;
                     self.ptr = self.ptr.offset(1);
@@ -1983,7 +1983,7 @@ impl<T> DoubleEndedIterator for IntoIter<T> {
 
                     // Use a non-null pointer value
                     // (self.end might be null because of wrapping)
-                    Some(ptr::read(1 as *mut T))
+                    Some(ptr::read(NonNull::dangling().as_ptr()))
                 } else {
                     self.end = self.end.offset(-1);
 

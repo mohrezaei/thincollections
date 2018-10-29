@@ -526,7 +526,7 @@ impl<T> V64<T> {
             unsafe {
                 let len = self.len() - 1;
                 self.set_len(len);
-                return ptr::read(1 as *const T);
+                return ptr::read(NonNull::dangling().as_ptr());
             }
         }
         unsafe {
@@ -697,7 +697,7 @@ impl<T> V64<T> {
                 let len = self.len();
                 assert!(index < len);
                 self.set_len(len - 1);
-                return ptr::read(1 as *const T);
+                return ptr::read(NonNull::dangling().as_ptr());
             }
         }
         let array: *mut T;
@@ -772,7 +772,7 @@ impl<T> V64<T> {
         if mem::size_of::<T>() == 0 {
             let mut count = 0;
             unsafe {
-                let t: T = ptr::read(1 as *const T);
+                let t: T = ptr::read(NonNull::dangling().as_ptr());
                 for _i in 0..self.len() {
                     if f(&t) { count += 1; }
                 }
@@ -1125,7 +1125,7 @@ impl<T> V64<T> {
             if len > 0 {
                 unsafe {
                     self.set_len(len - 1);
-                    return Some(ptr::read(1 as *const T));
+                    return Some(ptr::read(NonNull::dangling().as_ptr()));
                 }
             }
             return None;
@@ -1377,7 +1377,7 @@ impl<T> V64<T> {
     pub fn into_boxed_slice(mut self) -> Box<[T]> {
         if mem::size_of::<T>() == 0 {
             unsafe {
-                let slice = slice::from_raw_parts_mut(1 as *mut T, self.len());
+                let slice = slice::from_raw_parts_mut(NonNull::dangling().as_ptr(), self.len());
                 let output: Box<[T]> = Box::from_raw(slice);
                 return output;
             }
@@ -1915,7 +1915,7 @@ impl<T> Deref for V64<T> {
 
     fn deref(&self) -> &[T] {
         unsafe {
-            if mem::size_of::<T>() == 0 { return slice::from_raw_parts(1 as *const T, self.len()); }
+            if mem::size_of::<T>() == 0 { return slice::from_raw_parts(NonNull::dangling().as_ptr(), self.len()); }
             match self.control() {
                 Control::Heap(ptr) => {
                     let len_ptr = ptr as *mut usize;
@@ -1935,7 +1935,7 @@ impl<T> Deref for V64<T> {
 impl<T> DerefMut for V64<T> {
     fn deref_mut(&mut self) -> &mut [T] {
         unsafe {
-            if mem::size_of::<T>() == 0 { return slice::from_raw_parts_mut(1 as *mut T, self.len()); }
+            if mem::size_of::<T>() == 0 { return slice::from_raw_parts_mut(NonNull::dangling().as_ptr(), self.len()); }
             match self.control() {
                 Control::Heap(ptr) => {
                     let len_ptr = ptr as *mut usize;
@@ -2185,7 +2185,7 @@ impl<T> Iterator for IntoIter<T> {
 
                     // Use a non-null pointer value
                     // (self.ptr might be null because of wrapping)
-                    Some(ptr::read(1 as *mut T))
+                    Some(ptr::read(NonNull::dangling().as_ptr()))
                 } else {
                     let old = self.ptr;
                     self.ptr = self.ptr.offset(1);
@@ -2224,7 +2224,7 @@ impl<T> DoubleEndedIterator for IntoIter<T> {
 
                     // Use a non-null pointer value
                     // (self.end might be null because of wrapping)
-                    Some(ptr::read(1 as *mut T))
+                    Some(ptr::read(NonNull::dangling().as_ptr()))
                 } else {
                     self.end = self.end.offset(-1);
 
