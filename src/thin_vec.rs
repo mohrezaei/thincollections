@@ -1592,7 +1592,7 @@ impl<T> Drop for ThinVec<T> {
     }
 }
 
-impl<T: Copy> ThinVec<T> {
+impl<T> ThinVec<T> {
     /// Transmutes the vector `ThinVec<T>` into another type of vector `ThinVec<X>`.
     /// Consumes the original vector.
     ///
@@ -1601,7 +1601,7 @@ impl<T: Copy> ThinVec<T> {
     /// `mem::align_of::<X>` must equal `mem::align_of::<T>`
     ///
     /// This is achieved with no copying at all, making it super fast.
-    /// Both `X` and `T` must be `Copy` types so as to guarantee no Drop (for sanity's sake only; no copying is performed).
+    /// `X` and `T` are enforced to not have a `Drop` implementation.
     ///
     /// This is useful and safe for all primitive types that have the same width
     /// For example:
@@ -1631,6 +1631,19 @@ impl<T: Copy> ThinVec<T> {
     /// any of the struct's invariants (e.g. no zeros if you're converting to `NonZeroU32`).
     /// repr(transparent) is a good annotation to use on such types.
     ///
+    /// ```
+    /// # #[macro_use] extern crate thincollections;
+    /// # use thincollections::thin_vec::ThinVec;
+    /// use std::cell::Cell;
+    /// # fn main() {
+    /// let vecf: ThinVec<f64> = thinvec![1.0, 2.0, 3.0];
+    /// unsafe {
+    ///     let vecc: ThinVec<Cell<f64>> = vecf.transmute();
+    ///     let vecf: ThinVec<f64> = vecc.transmute();
+    /// }
+    /// # }
+    /// ```
+    ///
     /// One thing this can help with is with a total ordered floating point wrapper struct that will
     /// then allow for sorting, max, binary search, etc.
     /// see [Sorting] for an example
@@ -1647,9 +1660,11 @@ impl<T: Copy> ThinVec<T> {
     ///
     /// [Sorting]: #sorting
     ///
-    pub unsafe fn transmute<X: Copy>(self) -> ThinVec<X> {
+    pub unsafe fn transmute<X>(self) -> ThinVec<X> {
         assert!(mem::size_of::<X>() == mem::size_of::<T>());
         assert!(mem::align_of::<X>() == mem::align_of::<T>());
+        assert!(!mem::needs_drop::<X>());
+        assert!(!mem::needs_drop::<T>());
         let v: ThinVec<X> = ThinVec { u: self.u, _marker: marker::PhantomData };
         mem::forget(self);
         v

@@ -1825,7 +1825,7 @@ impl<T> Drop for V64<T> {
     }
 }
 
-impl<T: Copy> V64<T> {
+impl<T> V64<T> {
     /// Transmutes the vector `V64<T>` into another type of vector `V64<X>`.
     /// Consumes the original vector.
     ///
@@ -1834,7 +1834,7 @@ impl<T: Copy> V64<T> {
     /// `mem::align_of::<X>` must equal `mem::align_of::<T>`
     ///
     /// This is achieved with no copying at all, making it super fast.
-    /// Both `X` and `T` must be `Copy` types so as to guarantee no Drop (for sanity's sake only; no copying is performed).
+    /// `X` and `T` are enforced to not have a `Drop` implementation.
     ///
     /// This is useful and safe for all primitive types that have the same width
     /// For example:
@@ -1877,9 +1877,11 @@ impl<T: Copy> V64<T> {
     ///
     /// Panics if the the size or alignment of X and T are different.
     ///
-    pub unsafe fn transmute<X: Copy>(self) -> V64<X> {
+    pub unsafe fn transmute<X>(self) -> V64<X> {
         assert!(mem::size_of::<X>() == mem::size_of::<T>());
         assert!(mem::align_of::<X>() == mem::align_of::<T>());
+        assert!(!mem::needs_drop::<X>());
+        assert!(!mem::needs_drop::<T>());
         let v: V64<X> = V64 { u: self.u, _marker: marker::PhantomData };
         mem::forget(self);
         v
