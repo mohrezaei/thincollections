@@ -15,7 +15,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-thincollections = "0.5.0"
+thincollections = "0.5"
 ```
 
 and this to your crate root:
