@@ -1011,3 +1011,11 @@ fn test_reserve_exact() {
     assert!(v.capacity() >= 33)
 }
 
+#[test]
+fn test_append_empty() {
+    let mut a:V64<u64> = v64![1];
+    let mut b = v64![];
+    a.append(&mut b);
+    assert_eq!(1, a.len());
+}
+

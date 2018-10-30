@@ -1236,10 +1236,12 @@ impl<T> V64<T> {
     #[inline]
     unsafe fn append_elements(&mut self, other: *const [T]) {
         let count = (*other).len();
-        self.reserve(count);
-        let len = self.len();
-        ptr::copy_nonoverlapping(other as *const T, self.get_unchecked_mut(len), count);
-        self.set_len(len + count);
+        if count > 0 {
+            self.reserve(count);
+            let len = self.len();
+            ptr::copy_nonoverlapping(other as *const T, self.get_unchecked_mut(len), count);
+            self.set_len(len + count);
+        }
     }
 
     unsafe fn set_len(&mut self, len: usize) {

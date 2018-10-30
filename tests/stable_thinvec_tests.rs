@@ -1011,3 +1011,15 @@ fn test_reserve_exact() {
     assert!(v.capacity() >= 33)
 }
 
+#[test]
+fn test_append_empty() {
+    let mut a = thinvec![1];
+    let mut b = thinvec![];
+    a.append(&mut b);
+    assert_eq!(1, a.len());
+
+    let mut a: ThinVec<u8> = thinvec![];
+    let mut b = thinvec![];
+    a.append(&mut b);
+    assert_eq!(0, a.len());
+}

@@ -1107,18 +1107,19 @@ impl<T> ThinVec<T> {
         }
         unsafe {
             self.append_elements(other.as_slice() as _);
-            let len_ptr = other.u.get() as *mut usize;
-            *len_ptr = 0;
+            other.set_len(0);
         }
     }
 
     #[inline]
     unsafe fn append_elements(&mut self, other: *const [T]) {
         let count = (*other).len();
-        self.reserve(count);
-        let len = self.len();
-        ptr::copy_nonoverlapping(other as *const T, self.get_unchecked_mut(len), count);
-        self.set_len(len + count);
+        if count > 0 {
+            self.reserve(count);
+            let len = self.len();
+            ptr::copy_nonoverlapping(other as *const T, self.get_unchecked_mut(len), count);
+            self.set_len(len + count);
+        }
     }
 
     unsafe fn set_len(&mut self, len: usize) {
