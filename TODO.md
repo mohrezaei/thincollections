@@ -14,6 +14,12 @@
 - consider supporting no-std?
 - fix links in the docs
 - thinvec/v64: more efficient extend for slices, other vectors and such
+- ThinMap:
+    - .map like https://crates.io/crates/hashmap_to_hashmap?
+    - macro initializer like https://crates.io/crates/hmap?
+    - rayon iterators like https://crates.io/crates/rayon-hash?
+    - `get_mut_multi([&K])`?
+- collection traits from https://crates.io/crates/eclectic?
 - v64: implement shrink back to stack
 - v64: into_iter without heap allocation
 - more tests
