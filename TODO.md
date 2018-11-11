@@ -20,6 +20,7 @@
     - rayon iterators like https://crates.io/crates/rayon-hash?
     - `get_mut_multi([&K])`?
 - collection traits from https://crates.io/crates/eclectic?
+- serde
 - v64: implement shrink back to stack
 - v64: into_iter without heap allocation
 - more tests

@@ -295,7 +295,7 @@ const ZST_MASK: usize = 0x8000_0000_0000_0000;
 #[cfg(target_pointer_width = "32")]
 const ZST_MASK: usize = 0x8000_0000;
 
-pub static DANGLE: usize = <usize>::max_value(); // it is impossible for alloc to return this value, as we require at least 2*usize space
+const DANGLE: usize = <usize>::max_value(); // it is impossible for alloc to return this value, as we require at least 2*usize space
 
 impl<T> ThinVec<T> {
     /// Constructs a new, empty `ThinVec<T>`.
@@ -1487,7 +1487,7 @@ impl<T> ThinVec<T> {
         }
     }
 
-    #[cold]
+    #[inline(always)]
     fn allocate_array(capacity: usize) -> *mut u8 {
         unsafe {
             // align_of is a power of 2. 2 * size_of::<usize> is a power of 2.
