@@ -23,6 +23,10 @@ struct Color {
     b: u8,
 }
 
+struct NoEqStruct {
+    x: u32
+}
+
 impl ThinSentinel for Color {
     fn thin_sentinel_zero() -> Self {
         Color { r: 0, g: 0, b: 0 }
@@ -44,6 +48,44 @@ fn custom_key()
     assert_eq!(17, *thin_map.get(&Color {r: 0, g: 0, b: 0}).unwrap());
     assert_eq!(42, *thin_map.get(&Color {r: 0, g: 0, b: 1}).unwrap());
     assert_eq!(1, *thin_map.get(&Color {r: 1, g: 1, b: 1}).unwrap());
+}
+
+#[test]
+fn test_raw_pointers_no_eq()
+{
+    let k1 = NoEqStruct { x: 1 };
+    let k2 = NoEqStruct { x: 1 };
+    let k3 = NoEqStruct { x: 1 };
+    let p1 = &k1 as *const NoEqStruct;
+    let p2 = &k2 as *const NoEqStruct;
+    let p3 = &k3 as *const NoEqStruct;
+    let mut thin_map = ThinMap::new();
+    thin_map.insert(p1, 17);
+    thin_map.insert(p2, 42);
+    thin_map.insert(p3, 1);
+
+    assert_eq!(17, *thin_map.get(&p1).unwrap());
+    assert_eq!(42, *thin_map.get(&p2).unwrap());
+    assert_eq!(1, *thin_map.get(&p3).unwrap());
+}
+
+#[test]
+fn test_raw_pointers_eq()
+{
+    let k1 = Color {r: 0, g: 0, b: 0};
+    let k2 = Color {r: 0, g: 0, b: 0};
+    let k3 = Color {r: 0, g: 0, b: 0};
+    let p1 = &k1 as *const Color;
+    let p2 = &k2 as *const Color;
+    let p3 = &k3 as *const Color;
+    let mut thin_map = ThinMap::new();
+    thin_map.insert(p1, 17);
+    thin_map.insert(p2, 42);
+    thin_map.insert(p3, 1);
+
+    assert_eq!(17, *thin_map.get(&p1).unwrap());
+    assert_eq!(42, *thin_map.get(&p2).unwrap());
+    assert_eq!(1, *thin_map.get(&p3).unwrap());
 }
 
 #[test]
