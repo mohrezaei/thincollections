@@ -114,6 +114,28 @@ impl_sentinel_for_primitive!(isize);
 
 impl_sentinel_for_primitive!(char);
 
+impl<T> ThinSentinel for *const T {
+    #[inline(always)]
+    fn thin_sentinel_zero() -> Self {
+        0 as Self
+    }
+    #[inline(always)]
+    fn thin_sentinel_one() -> Self {
+        1 as Self
+    }
+}
+
+impl<T> ThinSentinel for *mut T {
+    #[inline(always)]
+    fn thin_sentinel_zero() -> Self {
+        0 as Self
+    }
+    #[inline(always)]
+    fn thin_sentinel_one() -> Self {
+        1 as Self
+    }
+}
+
 /* this is a really bad idea:
 impl<V> ThinSentinel for Box<V> where V: ThinSentinel {
     fn thin_sentinel_zero() -> Self {
